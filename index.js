@@ -1,17 +1,23 @@
-require('dotenv').config();
-const express = require('express');
-const authRoutes = require('./routes/auth');
+// index.js
+// Punto de entrada del backend. Monta las rutas y arranca el servidor.
+
+const express = require("express");
+const bodyParser = require("body-parser");
+require("dotenv").config();
+
+const loginRoutes = require("./routes/login");
+const empresaRoutes = require("./routes/empresa");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-// Middleware para analizar JSON
-app.use(express.json());
+app.use(bodyParser.json());
 
-// Configurar rutas
-app.use('/auth', authRoutes);
+// Rutas de la API
+app.use("/api", loginRoutes);     // POST /api/login
+app.use("/api", empresaRoutes);   // POST y DELETE /api/empresa
 
 // Iniciar el servidor
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 });
