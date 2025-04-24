@@ -1,23 +1,26 @@
-// index.js
-// Punto de entrada del backend. Monta las rutas y arranca el servidor.
-
-const express = require("express");
-const bodyParser = require("body-parser");
 require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 
-const loginRoutes = require("./routes/login");
-const empresaRoutes = require("./routes/empresa");
+const loginRoutes = require("./routes/login");     // Rutas para autenticación
+const empresaRoutes = require("./routes/empresa"); // Rutas CRUD de empresa
+const alumnoRoutes = require("./routes/alumno");   // Rutas para alumno (favoritos, exportar Excel)
 
 const app = express();
-const port = 3000;
 
-app.use(bodyParser.json());
+// Middlewares globales
+app.use(cors()); // Permite peticiones desde cualquier origen
+app.use(express.json()); // Habilita JSON en el body de las peticiones
 
 // Rutas de la API
-app.use("/api", loginRoutes);     // POST /api/login
-app.use("/api", empresaRoutes);   // POST y DELETE /api/empresa
+app.use("/api", loginRoutes);
+app.use("/api", empresaRoutes);
+app.use("/api", alumnoRoutes);
 
-// Iniciar el servidor
-app.listen(port, () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
+// Levantar el servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Servidor escuchando en http://localhost:${PORT}`);
 });
+
+
