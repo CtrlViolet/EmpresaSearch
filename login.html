@@ -22,4 +22,34 @@
         </div>
     </div>
 </body>
+<script>
+    document.querySelector("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const tipo = document.querySelector("#tipo").value; // Tipo de usuario (alumno o administrativo)
+        const usuario = document.querySelector("#uname").value;
+        const contraseña = document.querySelector("#pass").value;
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ tipo, usuario, contraseña }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("token", data.token); // Guardar el token en localStorage
+                alert("Inicio de sesión exitoso");
+                window.location.href = "index.html"; // Redirigir al inicio
+            } else {
+                alert(data.error || "Error al iniciar sesión");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al conectar con el servidor");
+        }
+    });
+</script>
 </html>

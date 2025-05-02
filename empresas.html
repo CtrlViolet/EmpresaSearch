@@ -89,10 +89,24 @@ $role = "admin"; // Cambiar a "user" para probar como alumno
 </head>
 <body>
     <div class="table-container">
+        <!-- Botón para mostrar el formulario de agregar empresa -->
         <?php if ($role === "admin"): ?>
-            <!-- Botón para agregar nueva empresa -->
-            <a href="add_empresa.html" class="add-button">Agregar Nueva Empresa</a>
+            <button id="show-add-form" class="add-button">Agregar Nueva Empresa</button>
         <?php endif; ?>
+
+        <!-- Formulario para agregar una nueva empresa -->
+        <form id="add-form" style="display: none; margin-top: 20px;">
+            <input type="text" id="nombre" placeholder="Nombre de la Empresa" required>
+            <input type="text" id="estado" placeholder="Estado" required>
+            <input type="text" id="ciudad" placeholder="Ciudad" required>
+            <input type="text" id="calle" placeholder="Calle" required>
+            <input type="text" id="sector" placeholder="Sector" required>
+            <input type="text" id="carrera" placeholder="Carrera" required>
+            <input type="number" id="plazas_disponibles" placeholder="Plazas Disponibles" required>
+            <input type="text" id="numero_telefonico" placeholder="Número Telefónico" required>
+            <input type="text" id="representante" placeholder="Representante" required>
+            <button type="submit" class="add-button">Guardar Empresa</button>
+        </form>
 
         <table>
             <thead>
@@ -113,44 +127,107 @@ $role = "admin"; // Cambiar a "user" para probar como alumno
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Empresa 1</td>
-                    <td>Estado 1</td>
-                    <td>Ciudad 1</td>
-                    <td>Calle 1</td>
-                    <td>Sector 1</td>
-                    <td>Carrera 1</td>
-                    <td>5</td>
-                    <td>1234567890</td>
-                    <td>Representante 1</td>
-                    <?php if ($role === "admin"): ?>
-                        <td class="actions">
-                            <button class="edit">Editar</button>
-                            <button class="delete">Eliminar</button>
-                        </td>
-                    <?php endif; ?>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Empresa 2</td>
-                    <td>Estado 2</td>
-                    <td>Ciudad 2</td>
-                    <td>Calle 2</td>
-                    <td>Sector 2</td>
-                    <td>Carrera 2</td>
-                    <td>10</td>
-                    <td>0987654321</td>
-                    <td>Representante 2</td>
-                    <?php if ($role === "admin"): ?>
-                        <td class="actions">
-                            <button class="edit">Editar</button>
-                            <button class="delete">Eliminar</button>
-                        </td>
-                    <?php endif; ?>
-                </tr>
+                <!-- Las filas de la tabla se llenarán dinámicamente -->
             </tbody>
         </table>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("No tienes acceso. Por favor, inicia sesión.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const role = payload.tipo;
+
+        // Mostrar u ocultar elementos según el rol
+        if (role === "administrativo") {
+            document.querySelectorAll(".actions").forEach((el) => el.style.display = "flex");
+            document.querySelector(".add-button").style.display = "block";
+        } else if (role === "alumno") {
+            document.querySelectorAll(".actions").forEach((el) => el.style.display = "none");
+            document.querySelector(".add-button").style.display = "none";
+        } else {
+            alert("Rol no válido. Por favor, inicia sesión.");
+            window.location.href = "login.html";
+        }
+
+        // Mostrar el formulario de agregar empresa
+        const showAddFormButton = document.getElementById("show-add-form");
+        const addForm = document.getElementById("add-form");
+
+        showAddFormButton.addEventListener("click", () => {
+            addForm.style.display = addForm.style.display === "none" ? "block" : "none";
+        });
+
+        // Manejar el envío del formulario de agregar empresa
+        addForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nuevaEmpresa = {
+                nombre: document.getElementById("nombre").value,
+                estado: document.getElementById("estado").value,
+                ciudad: document.getElementById("ciudad").value,
+                calle: document.getElementById("calle").value,
+                sector: document.getElementById("sector").value,
+                carrera: document.getElementById("carrera").value,
+                plazas_disponibles: document.getElementById("plazas_disponibles").value,
+                numero_telefonico: document.getElementById("numero_telefonico").value,
+                representante: document.getElementById("representante").value,
+            };
+
+            try {
+                const response = await fetch("/api/empresas", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(nuevaEmpresa),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Error al agregar la empresa");
+                }
+
+                const data = await response.json();
+                alert(data.mensaje);
+
+                // Agregar la nueva empresa a la tabla
+                const tableBody = document.querySelector("tbody");
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${nuevaEmpresa.nombre}</td>
+                    <td>${nuevaEmpresa.estado}</td>
+                    <td>${nuevaEmpresa.ciudad}</td>
+                    <td>${nuevaEmpresa.calle}</td>
+                    <td>${nuevaEmpresa.sector}</td>
+                    <td>${nuevaEmpresa.carrera}</td>
+                    <td>${nuevaEmpresa.plazas_disponibles}</td>
+                    <td>${nuevaEmpresa.numero_telefonico}</td>
+                    <td>${nuevaEmpresa.representante}</td>
+                    <td class="actions">
+                        <button class="edit">Editar</button>
+                        <button class="delete">Eliminar</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+
+                // Limpiar el formulario
+                addForm.reset();
+                addForm.style.display = "none";
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error al agregar la empresa");
+            }
+        });
+    });
+</script>
 </html>
