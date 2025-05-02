@@ -1,13 +1,12 @@
-// routes/empresa.js
 const express = require("express");
 const db = require("../db");
 const { verificarToken, soloAdministrativo } = require("../middleware/auth");
+const { enviarCorreoAlumno } = require("../utils/email");
 
 const router = express.Router();
 
-/**
- * Crear una nueva empresa
- */
+//Crear una nueva empresa
+ 
 router.post("/empresa", verificarToken, soloAdministrativo, (req, res) => {
   const {
     Nombre,
@@ -40,14 +39,27 @@ router.post("/empresa", verificarToken, soloAdministrativo, (req, res) => {
         return res.status(500).json({ mensaje: "Error al crear empresa" });
       }
 
+      // Enviar correo a todos los alumnos
+      const alumnosQuery = "SELECT Correo FROM alumno";
+      db.query(alumnosQuery, (err, alumnos) => {
+        if (!err) {
+          alumnos.forEach(a => {
+            enviarCorreoAlumno(
+              a.Correo,
+              "Nueva empresa disponible",
+              `Se ha registrado una nueva empresa: ${Nombre}`
+            );
+          });
+        }
+      });
+
       res.status(201).json({ mensaje: "Empresa creada exitosamente", idEmpresa: result.insertId });
     }
   );
 });
 
-/**
- * Obtener todas las empresas
- */
+//Obtener todas las empresas
+ 
 router.get("/empresa", verificarToken, soloAdministrativo, (req, res) => {
   db.query("SELECT * FROM empresa", (err, results) => {
     if (err) {
@@ -59,9 +71,8 @@ router.get("/empresa", verificarToken, soloAdministrativo, (req, res) => {
   });
 });
 
-/**
- * Obtener una empresa por ID
- */
+//Obtener una empresa por ID
+ 
 router.get("/empresa/:id", verificarToken, soloAdministrativo, (req, res) => {
   const idEmpresa = req.params.id;
 
@@ -79,9 +90,8 @@ router.get("/empresa/:id", verificarToken, soloAdministrativo, (req, res) => {
   });
 });
 
-/**
- * Actualizar empresa
- */
+//Actualizar empresa
+ 
 router.put("/empresa/:id", verificarToken, soloAdministrativo, (req, res) => {
   const idEmpresa = req.params.id;
   const campos = req.body;
@@ -105,13 +115,35 @@ router.put("/empresa/:id", verificarToken, soloAdministrativo, (req, res) => {
       return res.status(404).json({ mensaje: "Empresa no encontrada" });
     }
 
+    // Notificar a alumnos si se activan plazas
+    if ("Plazas_Disponibles" in campos && campos.Plazas_Disponibles > 0) {
+      const favQuery = `
+        SELECT a.Correo, e.Nombre
+        FROM favoritos f
+        JOIN alumno a ON f.Numero_Control = a.Numero_Control
+        JOIN empresa e ON e.idEmpresa = f.idEmpresa
+        WHERE f.idEmpresa = ?
+      `;
+
+      db.query(favQuery, [idEmpresa], (err2, rows) => {
+        if (!err2) {
+          rows.forEach((row) => {
+            enviarCorreoAlumno(
+              row.Correo,
+              "¡Tu empresa favorita tiene plazas disponibles!",
+              `La empresa "${row.Nombre}" que marcaste como favorita ahora tiene plazas disponibles.`
+            );
+          });
+        }
+      });
+    }
+
     res.json({ mensaje: "Empresa actualizada exitosamente" });
   });
 });
 
-/**
- * Eliminar empresa
- */
+//Eliminar empresa
+ 
 router.delete("/empresa/:id", verificarToken, soloAdministrativo, (req, res) => {
   const idEmpresa = req.params.id;
 
@@ -130,3 +162,4 @@ router.delete("/empresa/:id", verificarToken, soloAdministrativo, (req, res) => 
 });
 
 module.exports = router;
+

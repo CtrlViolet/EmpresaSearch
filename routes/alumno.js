@@ -1,4 +1,3 @@
-// routes/alumno.js
 const express = require("express");
 const db = require("../db");
 const ExcelJS = require("exceljs");
@@ -6,9 +5,7 @@ const { verificarToken, soloAlumno } = require("../middleware/auth");
 
 const router = express.Router();
 
-/**
- * Obtener empresas favoritas del alumno
- */
+// Obtener empresas favoritas del alumno
 router.get("/favoritos", verificarToken, soloAlumno, (req, res) => {
   const numeroControl = req.usuario.id;
 
@@ -29,9 +26,7 @@ router.get("/favoritos", verificarToken, soloAlumno, (req, res) => {
   });
 });
 
-/**
- * Eliminar una empresa de favoritos
- */
+// Eliminar una empresa de favoritos
 router.delete("/favoritos/:idEmpresa", verificarToken, soloAlumno, (req, res) => {
   const numeroControl = req.usuario.id;
   const idEmpresa = req.params.idEmpresa;
@@ -52,9 +47,7 @@ router.delete("/favoritos/:idEmpresa", verificarToken, soloAlumno, (req, res) =>
   });
 });
 
-/**
- * Exportar empresas a Excel
- */
+// Exportar empresas a Excel (.xlsx)
 router.get("/empresa/exportar", verificarToken, soloAlumno, (req, res) => {
   const query = "SELECT * FROM empresa";
   db.query(query, async (err, empresas) => {
@@ -90,4 +83,35 @@ router.get("/empresa/exportar", verificarToken, soloAlumno, (req, res) => {
   });
 });
 
+// Exportar empresas a CSV (compatible con OpenOffice)
+router.get("/empresa/exportar-csv", verificarToken, soloAlumno, (req, res) => {
+  const query = "SELECT * FROM empresa";
+  db.query(query, (err, empresas) => {
+    if (err) {
+      console.error("Error al obtener empresas:", err);
+      return res.status(500).json({ mensaje: "Error al generar archivo CSV" });
+    }
+
+    let csv = "idEmpresa,Nombre,Estado,Ciudad,Ubicacion,Sector,Carrera_Destino,Plazas_Disponibles,idAdministrativo\n";
+    empresas.forEach((empresa) => {
+      csv += [
+        empresa.idEmpresa,
+        `"${empresa.Nombre}"`,
+        empresa.Estado,
+        empresa.Ciudad,
+        `"${empresa.Ubicacion}"`,
+        empresa.Sector,
+        empresa.Carrera_Destino,
+        empresa.Plazas_Disponibles,
+        empresa.idAdministrativo
+      ].join(",") + "\n";
+    });
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=empresas.csv");
+    res.send(csv);
+  });
+});
+
 module.exports = router;
+

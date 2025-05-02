@@ -1,13 +1,10 @@
-// middleware/auth.js
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-/**
- * Verifica que el token JWT sea válido y lo decodifica.
- */
-function verificarToken(req, res, next) {
-  const token = req.headers.authorization?.split(" ")[1]; // Formato: "Bearer <token>"
+//Verifica que el token JWT sea válido y lo decodifica.
 
+function verificarToken(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1]; 
   if (!token) {
     return res.status(401).json({ mensaje: "Token no proporcionado" });
   }
@@ -21,9 +18,7 @@ function verificarToken(req, res, next) {
   }
 }
 
-/**
- * Permite solo acceso a usuarios administrativos
- */
+// Permite solo acceso a usuarios administrativos
 function soloAdministrativo(req, res, next) {
   if (req.usuario?.tipo !== "administrativo") {
     return res.status(403).json({ mensaje: "Acceso denegado: solo administradores" });
@@ -31,9 +26,8 @@ function soloAdministrativo(req, res, next) {
   next();
 }
 
-/**
- * Permite solo acceso a alumnos
- */
+// Permite solo acceso a alumnos
+
 function soloAlumno(req, res, next) {
   if (req.usuario?.tipo !== "alumno") {
     return res.status(403).json({ mensaje: "Acceso denegado: solo alumnos" });

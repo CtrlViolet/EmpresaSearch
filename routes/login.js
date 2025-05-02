@@ -1,6 +1,4 @@
-// login.js
 // Ruta para iniciar sesión como administrativo o alumno. Retorna un JWT.
-
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const db = require("../db");
