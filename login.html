@@ -21,6 +21,7 @@
             <p style="color: #59238F;"></p>
         </div>
     </div>
+    <script src="login.js"></script>
 </body>
 <script>
     document.querySelector("form").addEventListener("submit", async (e) => {
@@ -35,6 +36,7 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ tipo, usuario, contraseña }),
+                
             });
 
             const data = await response.json();
