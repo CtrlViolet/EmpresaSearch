@@ -1,57 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/login.css">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="assets/css/login.css"/>
+  <title>Login</title>
 </head>
 <body>
-    <div class="loginBox"> <img class="user" src="https://i.ibb.co/yVGxFPR/2.png" height="100px" width="100px">
-        <h3>Inicia Sesion</h3>
-        <form action="login.php" method="post">
-            <div class="inputBox"> 
-                <input id="uname" type="text" name="Username" placeholder="Usuario"> 
-                <input id="pass" type="password" name="Password" placeholder="Contraseña"> 
-            </div> 
-            <input type="submit" name="" value="Iniciar Sesión">
-        </form>
-        <a href="#"><br> </a>
-        <div class="text-center">
-            <p style="color: #59238F;"></p>
-        </div>
+  <div class="loginBox">
+    <img class="user" src="https://i.ibb.co/yVGxFPR/2.png" height="100px" width="100px">
+    <h3>Inicia Sesión</h3>
+    
+    <form id="loginForm">
+      <!-- Selección de tipo de usuario -->
+      <select id="tipo" required>
+        <option value="" disabled selected>Selecciona tipo de usuario</option>
+        <option value="alumno">Alumno</option>
+        <option value="administrativo">Administrativo</option>
+      </select>
+
+      <!-- Campos de usuario y contraseña -->
+      <div class="inputBox">
+        <input id="uname" type="text" placeholder="Usuario" required>
+        <input id="pass" type="password" placeholder="Contraseña" required>
+      </div>
+
+      <!-- Botón de enviar -->
+      <input type="submit" value="Iniciar Sesión">
+    </form>
+
+    <a href="#"><br></a>
+    <div class="text-center">
+      <p style="color: #59238F;"></p>
     </div>
-    <script src="login.js"></script>
-</body>
-<script>
-    document.querySelector("form").addEventListener("submit", async (e) => {
-        e.preventDefault();
+  </div>
 
-        const tipo = document.querySelector("#tipo").value; // Tipo de usuario (alumno o administrativo)
-        const usuario = document.querySelector("#uname").value;
-        const contraseña = document.querySelector("#pass").value;
+  <!-- Script de login -->
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-        try {
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ tipo, usuario, contraseña }),
-                
-            });
+      const tipo = document.getElementById("tipo").value;
+      const usuario = document.getElementById("uname").value;
+      const contraseña = document.getElementById("pass").value;
 
-            const data = await response.json();
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tipo, usuario, contraseña })
+        });
 
-            if (response.ok) {
-                localStorage.setItem("token", data.token); // Guardar el token en localStorage
-                alert("Inicio de sesión exitoso");
-                window.location.href = "index.html"; // Redirigir al inicio
-            } else {
-                alert(data.error || "Error al iniciar sesión");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Error al conectar con el servidor");
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+          alert("Inicio de sesión exitoso");
+          window.location.href = "index.html";
+        } else {
+          alert(data.error || "Error al iniciar sesión");
         }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al conectar con el servidor");
+      }
     });
-</script>
+  </script>
+</body>
 </html>
