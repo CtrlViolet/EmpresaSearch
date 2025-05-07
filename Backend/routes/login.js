@@ -1,10 +1,10 @@
-// Ruta para iniciar sesión como administrativo o alumno. Retorna un JWT.
+// routes/login.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const db = require("../db");
 require("dotenv").config();
 
-const router = express.Router();
+const router = express.Router(); 
 
 // Ruta POST /api/login
 router.post("/login", (req, res) => {
@@ -94,4 +94,5 @@ router.post("/login", (req, res) => {
 });
 
 module.exports = router;
+
 
