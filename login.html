@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="assets/css/login.css"/>
+  <title>Login</title>
+</head>
+<body>
+  <div class="loginBox">
+    <img class="user" src="https://i.ibb.co/yVGxFPR/2.png" height="100px" width="100px">
+    <h3>Inicia Sesión</h3>
+    
+    <form id="loginForm">
+      <!-- Selección de tipo de usuario -->
+      <select id="tipo" required>
+        <option value="" disabled selected>Selecciona tipo de usuario</option>
+        <option value="alumno">Alumno</option>
+        <option value="administrativo">Administrativo</option>
+      </select>
+
+      <!-- Campos de usuario y contraseña -->
+      <div class="inputBox">
+        <input id="uname" type="text" placeholder="Usuario" required>
+        <input id="pass" type="password" placeholder="Contraseña" required>
+      </div>
+
+      <!-- Botón de enviar -->
+      <input type="submit" value="Iniciar Sesión">
+    </form>
+
+    <a href="#"><br></a>
+    <div class="text-center">
+      <p style="color: #59238F;"></p>
+    </div>
+  </div>
+
+  <!-- Script de login -->
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const tipo = document.getElementById("tipo").value;
+      const usuario = document.getElementById("uname").value;
+      const contraseña = document.getElementById("pass").value;
+
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tipo, usuario, contraseña })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+          alert("Inicio de sesión exitoso");
+          window.location.href = "index.html";
+        } else {
+          alert(data.error || "Error al iniciar sesión");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error al conectar con el servidor");
+      }
+    });
+  </script>
+</body>
+</html>

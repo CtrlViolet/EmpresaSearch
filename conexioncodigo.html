@@ -1,0 +1,118 @@
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+<script>
+    /*
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("No tienes acceso. Por favor, inicia sesión.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const role = payload.tipo;
+
+        if (role !== "administrativo" && role !== "alumno") {
+            alert("Rol no válido. Por favor, inicia sesión.");
+            window.location.href = "login.html";
+        }
+    });
+    */
+    /*
+      document.addEventListener("DOMContentLoaded", () => {
+          const token = localStorage.getItem("token");
+  
+          if (!token) {
+              alert("No tienes acceso. Por favor, inicia sesión.");
+              window.location.href = "login.html";
+              return;
+          }
+  
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          const role = payload.tipo;
+  
+          // Mostrar u ocultar elementos según el rol
+          if (role === "administrativo") {
+              document.querySelectorAll(".actions").forEach((el) => el.style.display = "flex");
+              document.querySelector(".add-button").style.display = "block";
+          } else if (role === "alumno") {
+              document.querySelectorAll(".actions").forEach((el) => el.style.display = "none");
+              document.querySelector(".add-button").style.display = "none";
+          } else {
+              alert("Rol no válido. Por favor, inicia sesión.");
+              window.location.href = "login.html";
+          }
+   */
+    // Mostrar el formulario de agregar empresa
+    const showAddFormButton = document.getElementById("show-add-form");
+    const addForm = document.getElementById("add-form");
+
+    showAddFormButton.addEventListener("click", () => {
+        addForm.style.display = addForm.style.display === "none" ? "block" : "none";
+    });
+
+    // Manejar el envío del formulario de agregar empresa
+    addForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const nuevaEmpresa = {
+            nombre: document.getElementById("nombre").value,
+            estado: document.getElementById("estado").value,
+            ciudad: document.getElementById("ciudad").value,
+            calle: document.getElementById("calle").value,
+            sector: document.getElementById("sector").value,
+            carrera: document.getElementById("carrera").value,
+            plazas_disponibles: document.getElementById("plazas_disponibles").value,
+            numero_telefonico: document.getElementById("numero_telefonico").value,
+            representante: document.getElementById("representante").value,
+        };
+
+        try {
+            const response = await fetch("/api/empresas", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(nuevaEmpresa),
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al agregar la empresa");
+            }
+
+            const data = await response.json();
+            alert(data.mensaje);
+
+            // Agregar la nueva empresa a la tabla
+            const tableBody = document.querySelector("tbody");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td data-th="Id">${data.id}</td>
+                    <td data-th="Nombre de la Empresa">${nuevaEmpresa.nombre}</td>
+                    <td data-th="Estado">${nuevaEmpresa.estado}</td>
+                    <td data-th="Ciudad">${nuevaEmpresa.ciudad}</td>
+                    <td data-th="Calle">${nuevaEmpresa.calle}</td>
+                    <td data-th="Sector">${nuevaEmpresa.sector}</td>
+                    <td data-th="Carrera">${nuevaEmpresa.carrera}</td>
+                    <td data-th="Plazas Disponibles">${nuevaEmpresa.plazas_disponibles}</td>
+                    <td data-th="Numero Telefonico">${nuevaEmpresa.numero_telefonico}</td>
+                    <td data-th="Representante">${nuevaEmpresa.representante}</td>
+                    <td class="actions">
+                        <button class="edit">Editar</button>
+                        <button class="delete">Eliminar</button>
+                    </td>
+                `;
+            tableBody.appendChild(row);
+
+            // Limpiar el formulario
+            addForm.reset();
+            addForm.style.display = "none";
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al agregar la empresa");
+        }
+    });
+
+</script>

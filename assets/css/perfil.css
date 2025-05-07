@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #28223F;
+    font-family: Montserrat, sans-serif;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    min-height: 100vh;
+    margin: 0;
+}
+
+h3 {
+    margin: 10px 0;
+}
+
+h6 {
+    margin: 5px 0;
+    text-transform: uppercase;
+}
+
+p {
+    font-size: 14px;
+    line-height: 21px;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background-color: #1a202c;
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navbar-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+    color: #63b3ed;
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 80px 20px 20px; /* Ajuste para que no se superponga con el navbar */
+    gap: 20px;
+}
+
+/* Contenedor del perfil */
+.card-container {
+    width: 30%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+.card-container .pro {
+    background: #f39c12;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.card-container .round {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.card-container h3 {
+    margin: 10px 0;
+    font-size: 1.5rem;
+}
+
+.card-container h6 {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #888;
+}
+
+.card-container p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.card-container .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.card-container .buttons .primary {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.card-container .buttons .primary.ghost {
+    background: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.card-container .skills {
+    text-align: left;
+}
+
+.card-container .skills h6 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.card-container .skills ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card-container .skills ul li {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+/* Contenedor de la tabla */
+.table-container {
+    width: 65%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+}
+
+.table-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #34495E;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.table-header h1 {
+    font-size: 1.5rem;
+    color: #34495E;
+}
+
+/* Botón de eliminar fila */
+.btn-delete-row {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-delete-row:hover {
+    background-color: #c82333;
+}
+
+/* Botón de eliminar tabla */
+.btn-delete-table {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-delete-table:hover {
+    background-color: #c82333;
+}
+
+/* Tabla responsiva */
+.rwd-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #34495E;
+    color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.rwd-table th, .rwd-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.rwd-table th {
+    background-color: #59238F;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.rwd-table tr:hover {
+    background-color: #2c3e50;
+}
+
+/* Asegura que las filas no se salgan del contenedor */
+.rwd-table td {
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+button.primary {
+    background-color: #03BFCB;
+    border: 1px solid #03BFCB;
+    border-radius: 3px;
+    color: #231E39;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
+    padding: 10px 25px;
+}
+
+button.primary.ghost {
+    background-color: transparent;
+    color: #02899C;
+}
+
+.skills {
+    background-color: #1F1A36;
+    text-align: left;
+    padding: 15px;
+    margin-top: 30px;
+}
+
+.skills ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.skills ul li {
+    border: 1px solid #2D2747;
+    border-radius: 2px;
+    display: inline-block;
+    font-size: 12px;
+    margin: 0 7px 7px 0;
+    padding: 7px;
+}
+
+footer {
+    background-color: #222;
+    color: #fff;
+    font-size: 14px;
+    bottom: 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 999;
+}
+
+footer p {
+    margin: 10px 0;
+}
+
+footer i {
+    color: red;
+}
+
+footer a {
+    color: #3c97bf;
+    text-decoration: none;
+}
