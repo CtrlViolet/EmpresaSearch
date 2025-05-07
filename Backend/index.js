@@ -7,6 +7,8 @@ const cors = require("cors");
 const loginRoutes = require("./routes/login");
 const empresaRoutes = require("./routes/empresa");
 const alumnoRoutes = require("./routes/alumno");
+const filtradoRoutes = require("./routes/filtrado");
+
 
 const app = express();
 
@@ -29,6 +31,8 @@ app.get("/", (req, res) => {
 app.use("/api", loginRoutes);
 app.use("/api", empresaRoutes);
 app.use("/api", alumnoRoutes);
+app.use("/api", filtradoRoutes);
+
 
 // Levantar el servidor
 const PORT = process.env.PORT || 3000;
